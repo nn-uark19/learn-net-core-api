@@ -18,4 +18,5 @@
 5. Can be access at http://localhost:6600/api/values
     
 ## Note
-1. Starting code is https://github.com/psauthor/CoreApiFundamentals
+1. Starting code, https://github.com/psauthor/CoreApiFundamentals
+2. Reference code, https://github.com/rnietoe/CoreCodeCamp
