@@ -15,7 +15,7 @@
 ```console
 > dotnet watch
 ```
-5. Can be access at http://localhost:6600/api/values
+5. Can be access at http://localhost:5001/api/values (depends on values in launchSettings.json)
     
 ## Note
 1. Starting code, https://github.com/psauthor/CoreApiFundamentals
