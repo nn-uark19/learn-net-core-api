@@ -1,4 +1,6 @@
-﻿using CoreCodeCamp.Data;
+﻿using AutoMapper;
+using CoreCodeCamp.Data;
+using CoreCodeCamp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,19 +14,51 @@ namespace CoreCodeCamp.Controllers
   public class CampsController : ControllerBase
   {
     private readonly ICampRepository _repository;
+    private readonly IMapper _mapper;
 
-    public CampsController(ICampRepository repository)
+    public CampsController(ICampRepository repository, IMapper mapper)
     {
       _repository = repository;
+      _mapper = mapper;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAsync()
+    public async Task<ActionResult<CampModel[]>> Get(bool includeTalks = false)
     {
       try
       {
-        var results = await _repository.GetAllCampsAsync();
-        return Ok(results);
+        var results = await _repository.GetAllCampsAsync(includeTalks);
+        return _mapper.Map<CampModel[]>(results);
+      }
+      catch (Exception e)
+      {
+        return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+      }
+    }
+
+    [HttpGet("{moniker}")]
+    public async Task<ActionResult<CampModel>> Get(string moniker)
+    {
+      try
+      {
+        var result = await _repository.GetCampAsync(moniker);
+        if (result == null) return NotFound();
+        return _mapper.Map<CampModel>(result);
+      }
+      catch (Exception)
+      {
+        return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+      }
+    }
+
+    [HttpGet("search")]
+    public async Task<ActionResult<CampModel[]>> SearchByDate(DateTime theDate, bool includeTalks = false)
+    {
+      try
+      {
+        var results = await _repository.GetAllCampsByEventDate(theDate, includeTalks);
+        if (!results.Any()) return NotFound();
+        return _mapper.Map<CampModel[]>(results);
       }
       catch (Exception)
       {
